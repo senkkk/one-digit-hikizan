@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ひきざんのぶどうえん</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="app-title">
+        <div>
+          <p class="eyebrow">ぶどうを とって かぞえよう</p>
+          <h1 id="app-title">ひきざんのぶどうえん</h1>
+          <p class="lead">
+            1から10までの かずどうしを ひいて、のこった ぶどうを かぞえよう。こたえるたびに、おいしい たべものを ゲットできるよ。
+          </p>
+        </div>
+        <div class="hero-card" aria-live="polite">
+          <span class="hero-card__label">ゲットした かず</span>
+          <strong><span id="streak-count">0</span>/10</strong>
+          <small>あと <span id="remaining-count">10</span> こで ひとやすみ</small>
+        </div>
+      </section>
+
+      <div class="layout-grid">
+        <section class="panel problem-panel" aria-labelledby="problem-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">もんだい</p>
+              <h2 id="problem-title">いくつ のこるかな</h2>
+            </div>
+            <button class="ghost-button" id="new-problem-button" type="button">べつの もんだい</button>
+          </div>
+
+          <div class="sum-card" aria-live="polite">
+            <div class="number-bubble"><span id="addend-a">0</span></div>
+            <div class="minus-mark">−</div>
+            <div class="number-bubble"><span id="addend-b">0</span></div>
+            <div class="equals-mark">=</div>
+            <div class="answer-bubble">?</div>
+          </div>
+
+          <div class="grape-board" aria-label="かぞえる ぶどう">
+            <div class="grape-group">
+              <p><span id="group-a-label">0</span> この ぶどう</p>
+              <div class="grapes" id="grapes-a"></div>
+            </div>
+            <div class="grape-group picked">
+              <p><span id="group-b-label">0</span> こ とったよ</p>
+              <div class="grapes" id="grapes-b"></div>
+            </div>
+          </div>
+
+          <form class="answer-form" id="answer-form">
+            <label for="answer-input">のこりの かずを いれてね</label>
+            <div class="answer-row">
+              <input id="answer-input" name="answer" type="text" inputmode="none" autocomplete="off" readonly aria-describedby="keypad-help" />
+              <button class="primary-button" id="answer-button" type="submit">こたえる</button>
+            </div>
+          </form>
+
+          <div class="keypad-area" aria-label="すうじボタンで こたえを いれる">
+            <p id="keypad-help">すうじボタンを おして、ブラウザだけで こたえよう。</p>
+            <div class="keypad-grid" id="keypad-grid"></div>
+          </div>
+
+          <div class="choice-area" aria-label="こたえを えらぶ">
+            <p>こたえの こうほを えらんでも いいよ</p>
+            <div class="choice-grid" id="choice-grid"></div>
+          </div>
+
+          <p class="feedback" id="feedback" aria-live="polite">ぶどうを とった あとの かずを かぞえてみよう。</p>
+          <div class="progress-wrap">
+            <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+            <p>せいかいするたびに、たべものを ひとつ ゲットできるよ。</p>
+          </div>
+        </section>
+
+        <aside class="panel reward-panel" aria-labelledby="reward-title">
+          <p class="eyebrow">ごほうび</p>
+          <h2 id="reward-title">さいきん ゲットした たべもの</h2>
+          <div class="last-reward empty" id="last-reward" aria-live="polite">
+            <div class="food-emoji">?</div>
+            <p>まだ たべものは ないよ。こたえて ゲットしよう。</p>
+          </div>
+          <button class="danger-button" id="reset-run-button" type="button">ゲットした かずを 0にする</button>
+        </aside>
+      </div>
+
+      <section class="panel book-panel" aria-labelledby="book-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">コレクション</p>
+            <h2 id="book-title">たべもの ずかん</h2>
+          </div>
+          <div class="book-count"><span id="owned-count">0</span>/<span id="total-count">0</span> ゲット</div>
+        </div>
+        <div class="book-grid" id="book-grid"></div>
+        <button class="danger-button" id="reset-book-button" type="button">ずかんを けす</button>
+      </section>
+    </main>
+
+    <div class="modal" id="reward-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="food-emoji big" id="modal-emoji"></div>
+        <h2 id="modal-title">たべものを ゲット</h2>
+        <p id="modal-description">よく がんばったね。</p>
+        <button class="primary-button full" id="close-modal-button" type="button">つぎへ</button>
+      </div>
+    </div>
+
+    <div class="modal wrong-modal" id="wrong-modal" hidden>
+      <div class="modal-card wrong-modal-card" role="alertdialog" aria-modal="true" aria-labelledby="wrong-modal-title" aria-describedby="wrong-modal-description">
+        <div class="grape-character" aria-hidden="true"><span>🍇</span><span class="grape-character__shadow"></span></div>
+        <p class="eyebrow">ぶどうが おしらせ</p>
+        <h2 id="wrong-modal-title">あれれ、ちがうみたい</h2>
+        <p id="wrong-modal-description">もういちど、ぶどうを かぞえてみよう。</p>
+        <p class="wrong-modal-hint" id="wrong-modal-hint">とった ぶどうを はずして、のこりを かぞえてね。</p>
+        <button class="primary-button full" id="close-wrong-modal-button" type="button">もういちど</button>
+      </div>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -140,10 +140,9 @@ function renderProblem() {
 }
 
 function renderProgress() {
-  const progress = state.streak % runTarget;
-  els.streakCount.textContent = progress;
-  els.remainingCount.textContent = runTarget - progress;
-  els.progressBar.style.width = `${(progress / runTarget) * 100}%`;
+  els.streakCount.textContent = state.streak;
+  els.remainingCount.textContent = runTarget - state.streak;
+  els.progressBar.style.width = `${(state.streak / runTarget) * 100}%`;
 }
 
 function renderBook() {
@@ -154,7 +153,7 @@ function renderBook() {
     return `<article class="book-card ${isOwned ? '' : 'locked'}">
       <div class="food-emoji">${isOwned ? food.emoji : '?'}</div>
       <h3>${index + 1}. ${isOwned ? food.name : '???'}</h3>
-      <p>${isOwned ? food.description : 'せいかいしたら ゲットできるよ。'}</p>
+      <p>${isOwned ? food.description : '10もん せいかいしたら ゲットできるよ。'}</p>
     </article>`;
   }).join('');
 }
@@ -163,7 +162,7 @@ function renderLastReward() {
   const food = foods.find((candidate) => candidate.id === state.lastRewardId);
   if (!food) {
     els.lastReward.className = 'last-reward empty';
-    els.lastReward.innerHTML = `<div class="food-emoji">?</div><p>まだ たべものは ないよ。こたえて ゲットしよう。</p>`;
+    els.lastReward.innerHTML = `<div class="food-emoji">?</div><p>まだ たべものは ないよ。10もん せいかいして ゲットしよう。</p>`;
     return;
   }
   els.lastReward.className = 'last-reward';
@@ -225,18 +224,20 @@ function checkAnswer(value) {
   }
   state.streak += 1;
   renderProgress();
-  awardFood();
-  if (state.streak % runTarget === 0) {
-    setFeedback('10こ ゲット。ぶどうえんで ひとやすみしよう。', 'success');
+  if (state.streak === runTarget) {
+    awardFood();
+    setFeedback('10もん せいかい。たべものを ゲットしたよ。', 'success');
   } else {
-    setFeedback(`せいかい。たべものを ゲットしたよ。あと ${runTarget - (state.streak % runTarget)} こで ひとやすみ。`, 'success');
+    state.currentProblem = createProblem();
+    renderProblem();
+    setFeedback(`せいかい。あと ${runTarget - state.streak} もんで たべものを ゲットできるよ。`, 'success');
   }
 }
 
 function resetRun() {
   state.streak = 0;
   renderProgress();
-  nextProblem('ゲットした かずを 0にしたよ。');
+  nextProblem('せいかいした かずを 0にしたよ。');
 }
 
 function resetBook() {
@@ -252,6 +253,10 @@ function resetBook() {
 
 function closeModal() {
   els.rewardModal.hidden = true;
+  if (state.streak === runTarget) {
+    state.streak = 0;
+    renderProgress();
+  }
   nextProblem('つぎの ひきざんも やってみよう。');
 }
 
